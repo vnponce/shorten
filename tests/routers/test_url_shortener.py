@@ -2,6 +2,7 @@ import pytest
 from httpx import AsyncClient
 from fastapi import status
 
+from database import url_table, database
 from libs.url import generate_url
 
 
@@ -24,14 +25,27 @@ async def test_generate_url(async_client: AsyncClient):
 @pytest.mark.anyio
 async def test_redirect_to_original_url(async_client: AsyncClient):
     url = "https://www.google.com/test-1"
-    existing_url = await create_url(url, async_client)
-    print("existing_url", {**existing_url})
+    await create_url(url, async_client)
     short_code = generate_url(url)
 
     response = await async_client.get(f"/url-shortener/{short_code}")
     assert response.status_code == status.HTTP_200_OK
 
     data = response.json()
-    print(data)
 
     assert url == data
+
+
+@pytest.mark.anyio
+async def test_return_preexisting_url(async_client: AsyncClient):
+    url = "https://www.google.com/test-1"
+    await create_url(url, async_client)
+
+    # send preexisting url
+    await create_url(url, async_client)
+
+    query = url_table.select()
+    urls = await database.fetch_all(query)
+
+    # avoid create an preexisting url record
+    assert len(urls) == 1

@@ -6,6 +6,6 @@ def generate_url(url: str, size: int = 7) -> str:
     return generated
 
 
-def to_shortcode(url: str, size: int) -> str:
+def to_shortcode(url: str, size: int = 7) -> str:
     result = hashlib.md5(url.encode())
     return result.hexdigest()[:size]
