@@ -10,5 +10,4 @@ class Url(UrlIn):
     # instead of Object['a'] -> Object.a
     model_config = ConfigDict(from_attributes=True)
 
-    id: int
-    short_url: str
+    short_code: str
