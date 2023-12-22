@@ -12,4 +12,3 @@ class Url(UrlIn):
 
     id: int
     short_url: str
-
