@@ -47,5 +47,23 @@ async def test_return_preexisting_url(async_client: AsyncClient):
     query = url_table.select()
     urls = await database.fetch_all(query)
 
-    # avoid create an preexisting url record
+    # avoid create a preexisting url record
     assert len(urls) == 1
+
+
+@pytest.mark.anyio
+async def test_avoid_short_code_collision(async_client: AsyncClient):
+    # 89b98f23215a5e0d951a9792097841b7
+    url = "https://www.google.com/test-1"
+    fully_duplicated_short_code = generate_url(url, size=32)
+    duplicated_shortcode = fully_duplicated_short_code[:7]
+
+    # pre seed
+    data = {"url": url, "short_code": "89b98f2"}
+    query = url_table.insert().values(data)
+    await database.execute(query)
+
+    without_collision_record = await create_url("url-with-collision.com", async_client)
+
+    # assert without_collision_record["short_code"] == fully_duplicated_short_code[1:8]
+    assert without_collision_record["short_code"] == "9b98f23"
