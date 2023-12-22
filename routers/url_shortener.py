@@ -1,7 +1,6 @@
 from fastapi import APIRouter, status
 
 from database import database, url_table
-from libs.url import generate_url, to_shortcode
 from models.url_shortener import Url, UrlIn
 
 router = APIRouter()
@@ -22,23 +21,9 @@ async def create_post(url_in: UrlIn):
     if record is not None:
         return record
 
-    short_code = await find_unique_short_code(url_in.url)
+    short_code = await Url.generate_unique_short_code(url_in.url)
 
     data = {**url_in.model_dump(), "short_code": short_code}
     query = url_table.insert().values(data)
     await database.execute(query)
     return {**data}
-
-
-async def find_unique_short_code(url: str):
-    short_code = generate_url(url)
-    starting_index = 1
-    while True:
-        query = url_table.select().where(url_table.c.short_code == short_code)
-        record = await database.fetch_one(query)
-        if record is None:
-            break
-        starting_index += 1
-        short_code = generate_url(url, size=7, starting_index=starting_index)
-
-    return short_code
