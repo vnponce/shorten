@@ -10,7 +10,7 @@ url_table = sqlalchemy.Table(
     metadata,
     sqlalchemy.Column("id", sqlalchemy.Integer, primary_key=True),
     sqlalchemy.Column("url", sqlalchemy.String, nullable=False),
-    sqlalchemy.Column("short_url", sqlalchemy.String, nullable=False)
+    sqlalchemy.Column("short_code", sqlalchemy.String, nullable=False)
 )
 
 # to connect to sqlalchemy
