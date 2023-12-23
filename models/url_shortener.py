@@ -1,8 +1,7 @@
 from pydantic import BaseModel, ConfigDict, computed_field
 
 from database import url_table, database
-from libs.url import generate_url
-
+from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE, move_one_place_to_the_right
 
 class UrlIn(BaseModel):
     url: str
@@ -22,14 +21,15 @@ class Url(UrlIn):
 
     @classmethod
     async def generate_unique_short_code(cls, url: str):
-        short_code = generate_url(url)
+        full_short_code = generate_url(url, size=32)
+        short_code = full_short_code[:DEFAULT_SHORT_CODE_SIZE]
         starting_index = 1
+
         while True:
             query = url_table.select().where(url_table.c.short_code == short_code)
             record = await database.fetch_one(query)
             if record is None:
                 break
-            starting_index += 1
-            short_code = generate_url(url, size=7, starting_index=starting_index)
+            short_code = move_one_place_to_the_right(starting_index, full_short_code)
 
         return short_code
