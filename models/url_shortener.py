@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, computed_field
 
 from database import url_table, database
 from libs.url import generate_url
@@ -14,6 +14,11 @@ class Url(UrlIn):
     model_config = ConfigDict(from_attributes=True)
 
     short_code: str
+
+    @computed_field
+    @property
+    def short_url(self) -> str:
+        return "https://s.com/" + self.short_code
 
     @classmethod
     async def generate_unique_short_code(cls, url: str):
