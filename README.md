@@ -103,6 +103,6 @@ Run the app using:
 Access the docs in browser: http://127.0.0.1:8000/docs
 
 ## Improvements
-- Validate the data input is a correct URL
+- ~~Validate the data input is a correct URL~~
 - AWS Lambdas
 - More advance Python patterns
