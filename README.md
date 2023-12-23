@@ -1,5 +1,6 @@
 
-![screenshot](TBD)
+![Captura de pantalla 2023-12-22 a la(s) 7 45 45 p m](https://github.com/vnponce/shorten/assets/11002279/efcc6803-b1c6-433b-afa6-033d885c5b3d)
+
 
 ### Shorten - FastAPI URL shortener app
 
@@ -80,7 +81,7 @@ It was the easiest SQL database to configure. It is also fast to create a POC
 
 Clone using
 
-    $ git clone https://github.com/vnponce/url-shortener 
+    $ git clone https://github.com/vnponce/shorten 
 
 Create a virtual environment for the project and activate it:
 
