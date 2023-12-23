@@ -1,10 +1,16 @@
-from pydantic import BaseModel, ConfigDict, computed_field
+from pydantic import BaseModel, ConfigDict, computed_field, AnyUrl, AfterValidator
+from typing_extensions import Annotated
 
 from database import url_table, database
 from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE, move_one_place_to_the_right
 
+# This is a little hack since pydantic sends a "pydantic_core.Url" object instead of a string,
+# the database is expecting to get a string that triggers a Sql not supported type error
+UrlString = Annotated[AnyUrl, AfterValidator(lambda v: str(v))]
+
+
 class UrlIn(BaseModel):
-    url: str
+    url: UrlString
 
 
 class Url(UrlIn):

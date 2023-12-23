@@ -3,7 +3,7 @@ from httpx import AsyncClient
 from fastapi import status
 
 from database import url_table, database
-from libs.url import generate_url
+from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE
 
 
 async def create_url(url: str, async_client: AsyncClient) -> dict:
@@ -56,16 +56,16 @@ async def test_return_preexisting_url(async_client: AsyncClient):
 async def test_avoid_short_code_collision(async_client: AsyncClient):
     preexisting_forced_url_1 = "https://www.google.com/test-1"
     preexisting_forced_url_2 = "https://www.google.com/test-2"
-    colliding_url = "https://url-with-collision.com"
+    colliding_url = "https://url-with-collision.com/"  # AnyUrl from pydantic adds the "/" at the end
 
     duplicated_short_code = generate_url(colliding_url, size=32)
 
     # pre seed
-    data = {"url": preexisting_forced_url_1, "short_code": duplicated_short_code[:7]}
+    data = {"url": preexisting_forced_url_1, "short_code": duplicated_short_code[:DEFAULT_SHORT_CODE_SIZE]}
     query = url_table.insert().values(data)
     await database.execute(query)
     # pre seed 2
-    data = {"url": preexisting_forced_url_2, "short_code": duplicated_short_code[1:8]}
+    data = {"url": preexisting_forced_url_2, "short_code": duplicated_short_code[1:DEFAULT_SHORT_CODE_SIZE + 1]}
     query = url_table.insert().values(data)
     await database.execute(query)
 
