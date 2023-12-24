@@ -61,6 +61,18 @@ Knowing that, the way (and repeat my self) I try to implement my best OOP knowle
         return "https://s.com/" + self.short_code
 ```
 
+##### Url Class (validation)
+Implementing `AnyUrl` was not as simple as I expected, maybe there is a easy way, but I found a caveat. The `AnyUrl` from _pydantic_ returns a _pydantic object_ instead of a string, the database is expecting a `string` to be stored in the `url` column.
+Looking around the web I found this discussion called ["How can I integrate pydantic v2 URLs in code?"](https://github.com/pydantic/pydantic/discussions/6395)  taking the [Annotated Validator way](https://github.com/pydantic/pydantic/discussions/6395#discussioncomment-7159870)
+It a simple hack where we can convert the `AnyUrl` object to a `string` by a `lambda` function, all of this after the validation was passed.
+```python
+UrlString = Annotated[AnyUrl, AfterValidator(lambda v: str(v))]
+
+
+class UrlIn(BaseModel):
+    url: UrlString
+```
+
 ##### Why 7 chars
 To ensure project scalability rather than 7 chars bring the possibilities to create around 3,500 Billions Urls. MD5 has a 62 chars dictionary giving us the potential of 62 power 7 (62^7) records
 

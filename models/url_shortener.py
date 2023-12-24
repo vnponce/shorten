@@ -4,8 +4,10 @@ from typing_extensions import Annotated
 from database import url_table, database
 from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE, move_one_place_to_the_right
 
-# This is a little hack since pydantic sends a "pydantic_core.Url" object instead of a string,
-# the database is expecting to get a string that triggers a Sql not supported type error
+# This is a little hack since pydantic sends a "pydantic_core.Url" object instead of a string, the database is
+# expecting to get a string that triggers a Sql not supported type error Taken from this comment
+# [https://github.com/pydantic/pydantic/discussions/6395#discussioncomment-7159870] from discussion
+# " How can I integrate pydantic v2 URLs in code? #6395 "
 UrlString = Annotated[AnyUrl, AfterValidator(lambda v: str(v))]
 
 
