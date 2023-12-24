@@ -118,3 +118,4 @@ Access the docs in browser: http://127.0.0.1:8000/docs
 - ~~Validate the data input is a correct URL~~
 - AWS Lambdas
 - More advance Python patterns
+- Remove URL's longer than 30 days
