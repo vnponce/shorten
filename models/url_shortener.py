@@ -28,7 +28,7 @@ class Url(UrlIn):
         return "https://s.com/" + self.short_code
 
     @classmethod
-    async def generate_unique_short_code(cls, url: str):
+    async def generate_unique_short_code(cls, url: str) -> str:
         md5_for_url = generate_url(url, size=32)
         short_code = md5_for_url[:DEFAULT_SHORT_CODE_SIZE]
         starting_index = 1
@@ -52,4 +52,16 @@ class Url(UrlIn):
         query = url_table.select().where(url_table.c.url == url)
         return await database.fetch_one(query)
 
+    @classmethod
+    async def find_or_create(cls, url_in: UrlIn):
+        record = await cls.get_url_from_url(url_in.url)
 
+        if record is not None:
+            return {**record, "short_url": cls.short_url}
+
+        short_code = await cls.generate_unique_short_code(url_in.url)
+
+        data = {**url_in.model_dump(), "short_code": short_code}
+        query = url_table.insert().values(data)
+        await database.execute(query)
+        return {**data, "short_url": cls.short_url}

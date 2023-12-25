@@ -73,12 +73,28 @@ class UrlIn(BaseModel):
     url: UrlString
 ```
 
+##### Url Class (handle db calls)
+Since the router only has one responsibility I implemented the Dependency Injection provided by FastApi to make it more readable and maintainable, sending all the DB calls code to Url Class, where it belongs.
+
+Like:
+```python
+
+async def get_url_from_short_code(cls, short_code: str):
+    pass
+
+async def get_url_from_url(cls, url: str):
+    pass
+
+async def find_or_create(cls, url_in: UrlIn):
+    pass
+```
 ##### Why 7 chars
 To ensure project scalability rather than 7 chars bring the possibilities to create around 3,500 Billions Urls. MD5 has a 62 chars dictionary giving us the potential of 62 power 7 (62^7) records
 
 ##### TDD
 As you can see in the commits, all the project development was driven by testing. This is **the way I use to work** and I fell so comfortable implementing TDD in all my projects since 2015.
 I've noticed that following TDD as developers we improve communication and collaboration thus we share and ask better questions to understand the task and the business logic, also I know this help to detect early bugs that we can catch and fix before making potential damage.
+**Also, you can notice, from _refactor_ commits that I did great refactors with 100% confidence thus the tests told me everything it was working correctly.**
 
 
 ##### SqLite
@@ -117,5 +133,5 @@ Access the docs in browser: http://127.0.0.1:8000/docs
 ## Improvements
 - ~~Validate the data input is a correct URL~~
 - AWS Lambdas
-- More advance Python patterns
+- More advance Python patterns, I'd like to learn more about them.
 - Remove URL's longer than 30 days
