@@ -2,7 +2,7 @@ from pydantic import BaseModel, ConfigDict, computed_field, AnyUrl, AfterValidat
 from typing_extensions import Annotated
 
 from database import url_table, database
-from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE, move_one_place_to_the_right
+from libs.url import generate_url, DEFAULT_SHORT_CODE_SIZE, traverse_md5
 
 # This is a little hack since pydantic sends a "pydantic_core.Url" object instead of a string, the database is
 # expecting to get a string that triggers a Sql not supported type error Taken from this comment
@@ -29,8 +29,8 @@ class Url(UrlIn):
 
     @classmethod
     async def generate_unique_short_code(cls, url: str):
-        full_short_code = generate_url(url, size=32)
-        short_code = full_short_code[:DEFAULT_SHORT_CODE_SIZE]
+        md5_for_url = generate_url(url, size=32)
+        short_code = md5_for_url[:DEFAULT_SHORT_CODE_SIZE]
         starting_index = 1
 
         while True:
@@ -38,6 +38,6 @@ class Url(UrlIn):
             record = await database.fetch_one(query)
             if record is None:
                 break
-            short_code = move_one_place_to_the_right(starting_index, full_short_code)
+            short_code = traverse_md5(starting_index, md5_for_url)
 
         return short_code

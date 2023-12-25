@@ -31,12 +31,12 @@ Here we can find the `genereate_url` method to make the code easier to read and 
 Trying to do my best in Python and my knowledge of OOP from others languages (like, PHP and Ruby) I decided to move part of the code related to the URL model to its own model file.
 
 The `@classmethod` decision.
-It is wise to take this code from the `route` file to another place and keep it the clean and readable, that is the main reason to don't let `route` files know how to `generate the unique short code`, this should be one URL specific task.
+It is wise to take this code from the `route` file to another place and keep it clean and readable, that is the main reason to don't let `route` files know how to `generate the unique short code`, this should be one URL specific task.
 ```python
     @classmethod
     async def generate_unique_short_code(cls, url: str):
-        full_short_code = generate_url(url, size=32)
-        short_code = full_short_code[:DEFAULT_SHORT_CODE_LENGTH]
+        md5_for_url = generate_url(url, size=32)
+        short_code = md5_for_url[:DEFAULT_SHORT_CODE_LENGTH]
         starting_index = 1
     
         while True:
@@ -44,7 +44,7 @@ It is wise to take this code from the `route` file to another place and keep it 
             record = await database.fetch_one(query)
             if record is None:
                 break
-            short_code = move_one_place_to_the_right(starting_index, full_short_code)
+            short_code = traverse_md5(starting_index, md5_for_url)
     
         return short_code
 ```
