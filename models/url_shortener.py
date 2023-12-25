@@ -34,10 +34,22 @@ class Url(UrlIn):
         starting_index = 1
 
         while True:
-            query = url_table.select().where(url_table.c.short_code == short_code)
-            record = await database.fetch_one(query)
+            record = await cls.get_url_from_short_code(short_code)
+
             if record is None:
                 break
             short_code = traverse_md5(starting_index, md5_for_url)
 
         return short_code
+
+    @classmethod
+    async def get_url_from_short_code(cls, short_code: str):
+        query = url_table.select().where(url_table.c.short_code == short_code)
+        return await database.fetch_one(query)
+
+    @classmethod
+    async def get_url_from_url(cls, url: str):
+        query = url_table.select().where(url_table.c.url == url)
+        return await database.fetch_one(query)
+
+

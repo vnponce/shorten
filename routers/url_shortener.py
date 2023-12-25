@@ -1,4 +1,4 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 
 from database import database, url_table
 from models.url_shortener import Url, UrlIn
@@ -7,16 +7,13 @@ router = APIRouter()
 
 
 @router.get("/{short_code}", status_code=status.HTTP_200_OK)
-async def create_post(short_code: str):
-    query = url_table.select().where(url_table.c.short_code == short_code)
-    record = await database.fetch_one(query)
-    return record["url"]
+async def create_post(url: Url = Depends(Url.get_url_from_short_code)):
+    return url["url"]
 
 
 @router.post("/shorten", response_model=Url, status_code=status.HTTP_201_CREATED)
 async def create_post(url_in: UrlIn):
-    query = url_table.select().where(url_table.c.url == url_in.url)
-    record = await database.fetch_one(query)
+    record = await Url.get_url_from_url(url_in.url)
 
     if record is not None:
         return {**record, "short_url": f"https://s.com/{record.short_code}"}
