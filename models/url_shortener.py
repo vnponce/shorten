@@ -34,7 +34,7 @@ class Url(UrlIn):
         starting_index = 1
 
         while True:
-            record = await cls.get_url_from_short_code(short_code)
+            record = await cls.by_shortcode(short_code)
 
             if record is None:
                 break
@@ -43,18 +43,18 @@ class Url(UrlIn):
         return short_code
 
     @classmethod
-    async def get_url_from_short_code(cls, short_code: str):
+    async def by_shortcode(cls, short_code: str):
         query = url_table.select().where(url_table.c.short_code == short_code)
         return await database.fetch_one(query)
 
     @classmethod
-    async def get_url_from_url(cls, url: str):
+    async def by_url(cls, url: str):
         query = url_table.select().where(url_table.c.url == url)
         return await database.fetch_one(query)
 
     @classmethod
     async def find_or_create(cls, url_in: UrlIn):
-        record = await cls.get_url_from_url(url_in.url)
+        record = await cls.by_url(url_in.url)
 
         if record is not None:
             return {**record, "short_url": cls.short_url}

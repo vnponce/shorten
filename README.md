@@ -79,10 +79,10 @@ Since the router only has one responsibility I implemented the Dependency Inject
 Like:
 ```python
 
-async def get_url_from_short_code(cls, short_code: str):
+async def by_shortcode(cls, short_code: str):
     pass
 
-async def get_url_from_url(cls, url: str):
+async def by_url(cls, url: str):
     pass
 
 async def find_or_create(cls, url_in: UrlIn):

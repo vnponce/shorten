@@ -6,7 +6,7 @@ router = APIRouter()
 
 
 @router.get("/{short_code}", status_code=status.HTTP_200_OK)
-async def get_url(url: Url = Depends(Url.get_url_from_short_code)) -> str:
+async def get_url(url: Url = Depends(Url.by_shortcode)) -> str:
     return url["url"]
 
 
